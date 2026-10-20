@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="An offline-first notes app built with plain JavaScript, IndexedDB and a Service Worker." />
+  <!-- theme-color: colours the browser bar on phones -->
+  <meta name="theme-color" content="#0f766e" />
+  <title>Offline Notes</title>
+  <!-- manifest.json makes the app installable like a phone app (a PWA) -->
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="style.css" />
+  <!-- "defer": download the script in parallel, run it after the HTML is parsed.
+       It doesn't block the first paint = faster page load (Core Web Vitals). -->
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <!-- Skip link: keyboard users press Tab once and can jump past the header (WCAG). -->
+  <a class="skip-link" href="#notes-list">Skip to notes</a>
+
+  <header class="topbar">
+    <h1>Offline Notes</h1>
+    <!-- Online/offline badge, updated by JS -->
+    <span id="status-badge" class="badge">Checking…</span>
+  </header>
+
+  <main class="layout">
+    <!-- ===== Note editor ===== -->
+    <section class="editor" aria-labelledby="editor-heading">
+      <h2 id="editor-heading">New note</h2>
+
+      <form id="note-form" novalidate>
+        <label for="note-title">Title</label>
+        <input id="note-title" type="text" maxlength="100" required autocomplete="off" />
+
+        <label for="note-body">Note</label>
+        <textarea id="note-body" rows="6" maxlength="2000"></textarea>
+
+        <!-- Shown when the title is empty. aria-describedby links it to the input for screen readers. -->
+        <p id="form-error" class="form-error" hidden>Please add a title.</p>
+
+        <div class="form-actions">
+          <button id="save-btn" type="submit">Save note</button>
+          <button id="cancel-btn" type="button" class="secondary" hidden>Cancel</button>
+        </div>
+        <p class="hint">Shortcut: <kbd>Ctrl</kbd> + <kbd>Enter</kbd> to save, <kbd>Esc</kbd> to cancel editing.</p>
+      </form>
+    </section>
+
+    <!-- ===== Notes list ===== -->
+    <section class="notes" aria-labelledby="notes-heading">
+      <div class="notes-header">
+        <h2 id="notes-heading">My notes <span id="note-count" class="count">0</span></h2>
+        <label for="search-input" class="visually-hidden">Search notes</label>
+        <input id="search-input" type="search" placeholder="Search notes…" />
+      </div>
+      <!-- tabindex="-1" lets the skip link move focus here -->
+      <ul id="notes-list" class="notes-list" tabindex="-1"></ul>
+    </section>
+  </main>
+
+  <!-- aria-live region: screen readers announce messages put here ("Note saved", "You are offline") -->
+  <div id="announcer" class="visually-hidden" aria-live="polite"></div>
+</body>
+</html>
